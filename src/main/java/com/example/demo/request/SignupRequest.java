@@ -10,10 +10,18 @@ public class SignupRequest {
 
     private String email;
 
-    private Set<String> role;
-
 
     private String password;
+
+    private String phoneNumber ;
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public String getUsername() {
         return username;
@@ -39,11 +47,5 @@ public class SignupRequest {
         this.password = password;
     }
 
-    public Set<String> getRole() {
-        return this.role;
-    }
 
-    public void setRole(Set<String> role) {
-        this.role = role;
-    }
 }
