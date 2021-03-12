@@ -20,61 +20,68 @@ public class UserDetailsImpl implements UserDetails {
 
     private String username;
 
-    private String email;
+    private String name;
 
-    private String phoneNumber;
 
     @JsonIgnore
     private String password;
 
-    private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String password,String phoneNumber ,
-                           Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Long id, String username, String password,String name
+                         ) {
         this.id = id;
         this.username = username;
-        this.email = email;
+
         this.password = password;
-        this.phoneNumber = phoneNumber ;
-        this.authorities = authorities;
+        this.name = name;
     }
 
     public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .collect(Collectors.toList());
+
 
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
-                user.getEmail(),
                 user.getPassword(),
-                user.getPhoneNumber(),
-                authorities);
+                user.getName()
+                );
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return null;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getEmail() {
-        return email;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
     public String getPassword() {
         return password;
     }
-
-    public String getPhoneNumber () {
-        return phoneNumber;
-    }
-
 
     @Override
     public String getUsername() {

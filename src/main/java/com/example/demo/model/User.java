@@ -9,8 +9,7 @@ import javax.persistence.*;
 @Entity
 @Table(	name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email")
+                @UniqueConstraint(columnNames = "username")
         })
 public class User {
     @Id
@@ -19,27 +18,20 @@ public class User {
 
     private String username;
 
-    private String phoneNumber;
-
-    private String email;
 
 
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    private String name;
+
 
     public User() {
     }
 
-    public User(String username, String email, String password , String phoneNumber) {
+    public User(String username, String password,String name) {
         this.username = username;
-        this.email = email;
         this.password = password;
-        this.phoneNumber = phoneNumber ;
+        this.name = name;
     }
 
     public Long getId() {
@@ -58,13 +50,7 @@ public class User {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getPassword() {
         return password;
@@ -74,19 +60,11 @@ public class User {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public String getName() {
+        return name;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setName(String name) {
+        this.name = name;
     }
 }
