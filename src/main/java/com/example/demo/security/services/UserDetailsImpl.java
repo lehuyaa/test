@@ -22,18 +22,20 @@ public class UserDetailsImpl implements UserDetails {
 
     private String name;
 
+    private Long moneyNumber;
 
     @JsonIgnore
     private String password;
 
 
-    public UserDetailsImpl(Long id, String username, String password,String name
+    public UserDetailsImpl(Long id, String username, String password,String name,Long moneyNumber
                          ) {
         this.id = id;
         this.username = username;
 
         this.password = password;
         this.name = name;
+        this.moneyNumber = moneyNumber;
     }
 
     public static UserDetailsImpl build(User user) {
@@ -43,7 +45,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                user.getName()
+                user.getName(),
+                user.getMoneyNumber()
                 );
     }
 
@@ -72,7 +75,13 @@ public class UserDetailsImpl implements UserDetails {
         this.name = name;
     }
 
+    public Long getMoneyNumber() {
+        return moneyNumber;
+    }
 
+    public void setMoneyNumber(Long moneyNumber) {
+        this.moneyNumber = moneyNumber;
+    }
 
     public void setPassword(String password) {
         this.password = password;

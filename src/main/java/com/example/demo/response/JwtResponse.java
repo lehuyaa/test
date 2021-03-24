@@ -8,12 +8,14 @@ public class JwtResponse {
     private Long id;
     private String username;
     private String name;
+    private Long moneyNumber;
 
-    public JwtResponse(String accessToken, Long id, String username,String name ) {
+    public JwtResponse(String accessToken, Long id, String username,String name ,Long moneyNumber) {
         this.token = accessToken;
         this.id = id;
         this.username = username;
         this.name = name ;
+        this.moneyNumber = moneyNumber;
 
     }
 
@@ -57,6 +59,12 @@ public class JwtResponse {
         this.username = username;
     }
 
+    public Long getMoneyNumber() {
+        return moneyNumber;
+    }
 
+    public void setMoneyNumber(Long moneyNumber) {
+        this.moneyNumber = moneyNumber;
+    }
 }
 

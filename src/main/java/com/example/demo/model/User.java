@@ -18,21 +18,25 @@ public class User {
 
     private String username;
 
-
-
     private String password;
 
     private String name;
+
+    private Long moneyNumber;
 
 
     public User() {
     }
 
-    public User(String username, String password,String name) {
+    public User(String username, String password,String name, Long moneyNumber) {
         this.username = username;
         this.password = password;
         this.name = name;
+        this.moneyNumber = moneyNumber;
     }
+
+
+
 
     public Long getId() {
         return id;
@@ -66,5 +70,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getMoneyNumber() {
+        return moneyNumber;
+    }
+
+    public void setMoneyNumber(Long moneyNumber) {
+        this.moneyNumber = moneyNumber;
     }
 }
