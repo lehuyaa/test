@@ -6,6 +6,7 @@ import com.example.demo.model.User;
 import com.example.demo.repository.BankAccountRepository;
 import com.example.demo.repository.TrannferRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.request.AddMoneyRequest;
 import com.example.demo.request.LoginRequest;
 import com.example.demo.request.SignupRequest;
 import com.example.demo.request.TransferPhoneRequest;
@@ -161,4 +162,25 @@ public class AuthController {
         return accounts;
     }
 
+
+    @PutMapping("/addMoney")
+    public ResponseEntity<?> addMoney  ( @RequestBody AddMoneyRequest addMoneyRequest) {
+       Optional<BankAccount> bankAccount = bankAccountRepository.findById(addMoneyRequest.getBankID());
+       Optional<User> user = userRepository.findById(addMoneyRequest.getUserID());
+
+        if(bankAccount.get().getMoneyNumber() < addMoneyRequest.getMoney()){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Số Dư Tài Khoản Không Đủ"));
+        }
+
+        bankAccount.get().setMoneyNumber(bankAccount.get().getMoneyNumber()- addMoneyRequest.getMoney() );
+        user.get().setMoneyNumber(user.get().getMoneyNumber()+addMoneyRequest.getMoney());
+
+        userRepository.save(user.get());
+        bankAccountRepository.save(bankAccount.get());
+
+        return ResponseEntity.ok(new MessageResponse("Nạp Tiền Thành Công"));
+
+    }
 }
