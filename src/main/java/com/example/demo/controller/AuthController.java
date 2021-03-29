@@ -1,15 +1,13 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.model.BankAccount;
-import com.example.demo.model.User;
-import com.example.demo.repository.BankAccountRepository;
-import com.example.demo.repository.TrannferRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.request.AddMoneyRequest;
 import com.example.demo.request.LoginRequest;
 import com.example.demo.request.SignupRequest;
 import com.example.demo.request.TransferPhoneRequest;
+import com.example.demo.response.HistoryResponse;
 import com.example.demo.response.JwtResponse;
 import com.example.demo.response.MessageResponse;
 import com.example.demo.response.UserResponse;
@@ -40,10 +38,19 @@ public class AuthController {
     UserRepository userRepository;
 
     List<BankAccount> accounts = new ArrayList<BankAccount>();
+    List<HistoryResponse> historyResponses = new ArrayList<>();
+    List<History> historys = new ArrayList<>();
+
+
 
     @Autowired
-    TrannferRepository  trannferRepository;
+    TransferToPhoneRepository transferToPhoneRepository;
 
+    @Autowired
+    AddMoneyRepository addMoneyRepository;
+
+    @Autowired
+    HistoryRepository historyRepository ;
 
     @Autowired
     BankAccountRepository bankAccountRepository;
@@ -131,7 +138,6 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-
         if(transferPhoneRequest.getPhoneTo().equals(transferPhoneRequest.getPhoneFrom())){
             return ResponseEntity
                     .badRequest()
@@ -144,12 +150,29 @@ public class AuthController {
                     .body(new MessageResponse("Số Dư Tài Khoản Không Đủ"));
         }
 
-
         userFrom.setMoneyNumber(userFrom.getMoneyNumber()-transferPhoneRequest.getMoney());
         userTo.setMoneyNumber(userTo.getMoneyNumber()+transferPhoneRequest.getMoney());
 
         userRepository.save(userFrom);
         userRepository.save(userTo);
+
+
+        TransferToPhone transfertoPhone = new TransferToPhone(userTo.getId(),userFrom.getId(),transferPhoneRequest.getMoney(),transferPhoneRequest.getContent());
+        transferToPhoneRepository.save(transfertoPhone);
+
+        History history1 = new History(userFrom.getId(),
+                transfertoPhone.getId(),
+                1L,
+                "Chuyển Tiền Cho "+userTo.getName(),
+                "Mất");
+
+        History history2 = new History(userTo.getId(),
+                transfertoPhone.getId(),
+                1L,
+                "Nhận Tiền Từ "+userFrom.getName(),
+                "Thêm");
+        historyRepository.save(history1);
+        historyRepository.save(history2);
 
         return ResponseEntity.ok(new MessageResponse("Giao Dịch Thành Công"));
     }
@@ -179,8 +202,58 @@ public class AuthController {
 
         userRepository.save(user.get());
         bankAccountRepository.save(bankAccount.get());
+        AddMoney addMoney = new AddMoney(user.get().getId(),
+                addMoneyRequest.getMoney(),
+                "Nạp Tiền Từ Ngân Hàng " + bankAccount.get().getBankName(),
+                addMoneyRequest.getBankID());
+        addMoneyRepository.save(addMoney);
 
+
+        History history = new History(user.get().getId(),
+                addMoney.getId(),
+                2L,
+                "Nạp Tiền Từ Ngân Hàng "+bankAccount.get().getBankName(),
+                "Thêm");
+
+        historyRepository.save(history);
         return ResponseEntity.ok(new MessageResponse("Nạp Tiền Thành Công"));
+
+    }
+
+    @GetMapping("/history/{user_id}")
+    public List<HistoryResponse> getHistory (@PathVariable("user_id") Long id) {
+        historys = historyRepository.findByIdUser(id);
+        historyResponses.clear();
+        for (int i = 0 ; i < historys.size() ;i++ ){
+            HistoryResponse historyResponse = new HistoryResponse();
+            historyResponse.setTitle(historys.get(i).getTitle());
+            historyResponse.setType(historys.get(i).getType());
+            historyResponse.setIdTypeDeal(historys.get(i).getIdTypeDeal());
+            if (historys.get(i).getIdTypeDeal()==1L){
+                Optional<TransferToPhone> transfertoPhone = transferToPhoneRepository.findById(historys.get(i).getIdDetails());
+                Optional<User> userTo  = userRepository.findById(transfertoPhone.get().getIdTo());
+                Optional<User> userFrom   = userRepository.findById(transfertoPhone.get().getIdFrom());
+                DetailsHistory  detail = new DetailsHistory(userFrom.get().getName(),
+                        userTo.get().getName(),
+                        transfertoPhone.get().getContent(),
+                        transfertoPhone.get().getMoney());
+                historyResponse.setDetails(detail);
+            }else if (historys.get(i).getIdTypeDeal()==2L){
+                Optional<AddMoney> addMoney  = addMoneyRepository.findById(historys.get(i).getIdDetails());
+                Optional<BankAccount> bankAccount = bankAccountRepository.findById(addMoney.get().getBankId());
+                Optional<User> userTo  = userRepository.findById(addMoney.get().getIdUser());
+                DetailsHistory  detail = new DetailsHistory(bankAccount.get().getBankName(),
+                        userTo.get().getName(),
+                        addMoney.get().getContent(),
+                        addMoney.get().getMoney());
+                historyResponse.setDetails(detail);
+            }
+            historyResponses.add(historyResponse);
+
+        }
+        return historyResponses;
+//        return historys;
+
 
     }
 }

@@ -1,10 +1,10 @@
 package com.example.demo.repository;
 
-import com.example.demo.model.TransferPhone;
 
+import com.example.demo.model.TransferToPhone;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TrannferRepository   extends JpaRepository<TransferPhone, Long> {
+public interface TransferToPhoneRepository extends JpaRepository<TransferToPhone, Long> {
 }
