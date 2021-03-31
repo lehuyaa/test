@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(	name = "add_money")
@@ -13,15 +14,25 @@ public class AddMoney {
     private Long money;
     private String content;
     private Long bankId;
+    private Date date;
 
     public AddMoney() {
     }
 
-    public AddMoney(Long idUser, Long money, String content, Long bankId) {
+    public AddMoney(Long idUser, Long money, String content, Long bankId, Date date) {
         this.idUser = idUser;
         this.money = money;
         this.content = content;
         this.bankId = bankId;
+        this.date = date;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getContent() {

@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(	name = "history")
@@ -28,6 +29,7 @@ public class History {
         this.idTypeDeal = idTypeDeal;
         this.title = title;
         this.type = type;
+
     }
 
     public Long getIdUser() {
