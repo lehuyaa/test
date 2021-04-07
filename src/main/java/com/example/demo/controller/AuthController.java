@@ -22,7 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -158,12 +157,8 @@ public class AuthController {
         userRepository.save(userFrom);
         userRepository.save(userTo);
 
-        Long time = System.currentTimeMillis();
-        TransferToPhone transfertoPhone = new TransferToPhone(userTo.getId(),
-                userFrom.getId(),
-                transferPhoneRequest.getMoney(),
-                transferPhoneRequest.getContent(),
-                new Date(time));
+
+        TransferToPhone transfertoPhone = new TransferToPhone(userTo.getId(),userFrom.getId(),transferPhoneRequest.getMoney(),transferPhoneRequest.getContent());
         transferToPhoneRepository.save(transfertoPhone);
 
         History history1 = new History(userFrom.getId(),
@@ -208,14 +203,12 @@ public class AuthController {
 
         userRepository.save(user.get());
         bankAccountRepository.save(bankAccount.get());
-
-        Long time = System.currentTimeMillis();
-
         AddMoney addMoney = new AddMoney(user.get().getId(),
                 addMoneyRequest.getMoney(),
                 "Nạp Tiền Từ Ngân Hàng " + bankAccount.get().getBankName(),
-                addMoneyRequest.getBankID(), new Date(time));
+                addMoneyRequest.getBankID());
         addMoneyRepository.save(addMoney);
+
 
         History history = new History(user.get().getId(),
                 addMoney.getId(),
@@ -244,7 +237,7 @@ public class AuthController {
                 DetailsHistory  detail = new DetailsHistory(userFrom.get().getName(),
                         userTo.get().getName(),
                         transfertoPhone.get().getContent(),
-                        transfertoPhone.get().getMoney(),transfertoPhone.get().getDate());
+                        transfertoPhone.get().getMoney());
                 historyResponse.setDetails(detail);
             }else if (historys.get(i).getIdTypeDeal()==2L){
                 Optional<AddMoney> addMoney  = addMoneyRepository.findById(historys.get(i).getIdDetails());
@@ -253,7 +246,7 @@ public class AuthController {
                 DetailsHistory  detail = new DetailsHistory(bankAccount.get().getBankName(),
                         userTo.get().getName(),
                         addMoney.get().getContent(),
-                        addMoney.get().getMoney(),addMoney.get().getDate());
+                        addMoney.get().getMoney());
                 historyResponse.setDetails(detail);
             }
             historyResponses.add(historyResponse);
